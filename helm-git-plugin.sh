@@ -196,6 +196,15 @@ main() {
 
   # Set helm home
   helm_home=$(helm home)
+  
+  # Temporary hack -- seems that once in a while, this is returning repository contents
+  # and not the directory name to where helm configuration is stored.  For the time being,
+  # hard-code the location when things "look bad".
+  if [[ $(echo "$helm_home" | wc -l) -gt 1 ]]; then
+    helm_home=~/.helm
+  fi
+  
+  
   if [ -z "$helm_home" ]; then
     readonly helm_home_target_path="$(mktemp -d "$TMPDIR/helm-git.XXXXXX")"
     helm_init "$helm_home_target_path" || error "Couldn't init helm"
